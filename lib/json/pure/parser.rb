@@ -150,8 +150,12 @@ module JSON
           source = source.to_str
         else
           raise TypeError, "#{source.inspect} is not like a string"
-        end
-        if defined?(::Encoding)
+        end  
+        # MC: Hack to make ActiveSupport::JSON.decode in Rails 3 work with REXML and Ruby 1.8.7
+        #     REXML defines ::Encoding which makes this gem think that we are Ruby 1.9 compatible.
+        #     We force execution of the 1.8 branch here since the encoding and encode methods
+        #     aren't available on String.
+        if false
           if source.encoding == ::Encoding::ASCII_8BIT
             b = source[0, 4].bytes.to_a
             source =
